@@ -13,7 +13,6 @@ interface SupplierSelectionProps {
 
 export default function SupplierSelection({
     suppliers,
-    productId,
     onSelect,
     selectedSupplierId
 }: SupplierSelectionProps) {
@@ -50,7 +49,7 @@ export default function SupplierSelection({
             {!selected && (
                 <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-xl">
                     <p className="text-sm text-blue-800">
-                        💡 <strong>Tip:</strong> If you don't select a supplier, we'll automatically assign the best-rated supplier for you.
+                        💡 <strong>Tip:</strong> If you don&apos;t select a supplier, we&apos;ll automatically assign the best-rated supplier for you.
                     </p>
                 </div>
             )}
@@ -77,8 +76,8 @@ function SupplierCard({ supplier, isSelected, onSelect }: SupplierCardProps) {
         <button
             onClick={onSelect}
             className={`relative p-5 rounded-2xl border-2 transition-all duration-300 text-left w-full ${isSelected
-                    ? 'border-primary-500 bg-primary-50 shadow-lg scale-105'
-                    : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-md'
+                ? 'border-primary-500 bg-primary-50 shadow-lg scale-105'
+                : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-md'
                 }`}
         >
             {/* Selected Indicator */}
@@ -90,8 +89,8 @@ function SupplierCard({ supplier, isSelected, onSelect }: SupplierCardProps) {
 
             {/* Badge */}
             <div className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold mb-3 ${badge.color === 'success' ? 'bg-success-100 text-success-700' :
-                    badge.color === 'primary' ? 'bg-primary-100 text-primary-700' :
-                        'bg-warning-100 text-warning-700'
+                badge.color === 'primary' ? 'bg-primary-100 text-primary-700' :
+                    'bg-warning-100 text-warning-700'
                 }`}>
                 <TrendingUp className="w-3 h-3" />
                 {badge.text}

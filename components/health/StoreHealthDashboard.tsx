@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { StoreHealthScore } from '@/types';
+import { StoreHealthScore, FactorScore } from '@/types';
 import { TrendingUp, TrendingDown, Minus, AlertCircle, CheckCircle, Award, Sparkles } from 'lucide-react';
 
 interface StoreHealthDashboardProps {
@@ -34,7 +34,7 @@ export default function StoreHealthDashboard({ healthScore }: StoreHealthDashboa
         return () => clearInterval(timer);
     }, [score]);
 
-    const getScoreColor = (score: number) => {
+    const getScoreColor = (score: number): 'success' | 'orange' | 'warning' | 'danger' => {
         if (score >= 90) return 'success';
         if (score >= 75) return 'orange';
         if (score >= 60) return 'warning';
@@ -53,8 +53,10 @@ export default function StoreHealthDashboard({ healthScore }: StoreHealthDashboa
         return 'D';
     };
 
-    const scoreColor = getScoreColor(score);
-    const grade = getScoreGrade(score);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const scoreColor = getScoreColor(score as number);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const grade = getScoreGrade(score as number);
 
     // Calculate stroke dasharray for circular progress
     const radius = 90;
@@ -241,7 +243,7 @@ export default function StoreHealthDashboard({ healthScore }: StoreHealthDashboa
 
 interface FactorCardProps {
     name: string;
-    factor: any;
+    factor: FactorScore;
     delay?: number;
     isVisible?: boolean;
 }

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Navigation from './Navigation';
-import { LayoutDashboard, Menu, X, Bell, Search, User, LogOut, ChevronDown } from 'lucide-react';
+import { LayoutDashboard, Menu, Bell, Search, LogOut, ChevronDown } from 'lucide-react';
 
 export default function Shell({ children }: { children: React.ReactNode }) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);

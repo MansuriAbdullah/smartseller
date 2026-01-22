@@ -25,8 +25,8 @@ export default function SettingsPage() {
                             <button
                                 key={idx}
                                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${tab.active
-                                        ? 'bg-primary-500 text-white shadow-lg shadow-primary-200'
-                                        : 'text-gray-600 hover:bg-gray-100'
+                                    ? 'bg-primary-500 text-white shadow-lg shadow-primary-200'
+                                    : 'text-gray-600 hover:bg-gray-100'
                                     }`}
                             >
                                 <tab.icon className="w-5 h-5" />
@@ -50,7 +50,7 @@ export default function SettingsPage() {
                                 </div>
                                 <div>
                                     <h4 className="text-lg font-bold text-gray-900">Store Logo & Info</h4>
-                                    <p className="text-sm text-gray-500">Update your shop's visual identity</p>
+                                    <p className="text-sm text-gray-500">Update your shop&apos;s visual identity</p>
                                 </div>
                             </div>
 

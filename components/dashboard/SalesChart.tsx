@@ -89,8 +89,8 @@ export default function SalesChart({ data }: SalesChartProps) {
                     <button
                         onClick={() => setChartType('line')}
                         className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${chartType === 'line'
-                                ? 'bg-white text-primary-600 shadow-md'
-                                : 'text-gray-600 hover:text-gray-900'
+                            ? 'bg-white text-primary-600 shadow-md'
+                            : 'text-gray-600 hover:text-gray-900'
                             }`}
                     >
                         Line Chart
@@ -98,8 +98,8 @@ export default function SalesChart({ data }: SalesChartProps) {
                     <button
                         onClick={() => setChartType('bar')}
                         className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${chartType === 'bar'
-                                ? 'bg-white text-primary-600 shadow-md'
-                                : 'text-gray-600 hover:text-gray-900'
+                            ? 'bg-white text-primary-600 shadow-md'
+                            : 'text-gray-600 hover:text-gray-900'
                             }`}
                     >
                         Bar Chart
@@ -119,8 +119,8 @@ export default function SalesChart({ data }: SalesChartProps) {
                             key={metric}
                             onClick={() => toggleMetric(metric)}
                             className={`p-3 rounded-xl border-2 transition-all duration-200 ${isSelected
-                                    ? 'border-primary-500 bg-primary-50'
-                                    : 'border-gray-200 bg-white hover:border-gray-300'
+                                ? 'border-primary-500 bg-primary-50'
+                                : 'border-gray-200 bg-white hover:border-gray-300'
                                 }`}
                         >
                             <div className="flex items-center gap-2">
@@ -150,8 +150,8 @@ export default function SalesChart({ data }: SalesChartProps) {
                         key={range}
                         onClick={() => setDateRange(range)}
                         className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all duration-200 ${dateRange === range
-                                ? 'bg-primary-600 text-white shadow-lg'
-                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                            ? 'bg-primary-600 text-white shadow-lg'
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                             }`}
                     >
                         {range === '7days' && 'Last 7 Days'}
@@ -184,7 +184,8 @@ export default function SalesChart({ data }: SalesChartProps) {
 
                         {selectedMetrics.map((metric) => {
                             const config = metricConfig[metric];
-                            const Component = chartType === 'line' ? Line : Bar;
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                            const Component = (chartType === 'line' ? Line : Bar) as any;
 
                             return (
                                 <Component

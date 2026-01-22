@@ -117,7 +117,7 @@ export default function DashboardPage() {
                                         <div className="h-full bg-white w-[98%] shadow-[0_0_10px_rgba(255,255,255,0.5)]"></div>
                                     </div>
                                     <p className="text-white/70 text-[11px] font-medium leading-relaxed italic">
-                                        "Excellent response time and order fulfillment rating."
+                                        &quot;Excellent response time and order fulfillment rating.&quot;
                                     </p>
                                 </div>
                             </div>
