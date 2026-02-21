@@ -19,8 +19,9 @@
     min-height: 100vh;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
     background-size: 400% 400%;
-    animation: gradientShift 15s ease infinite;
+    animation: gradientShift 30s ease infinite;
     position: relative;
+    will-change: background-position;
   }
 
   body::before {
@@ -47,7 +48,7 @@
 
   /* Glass Card Effect - Enhanced */
   .glass-card {
-    @apply bg-white/90 backdrop-blur-xl border border-white/30 shadow-2xl rounded-3xl;
+    @apply bg-white/90 backdrop-blur-md border border-white/30 shadow-xl rounded-3xl;
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
     animation: floatIn 0.6s ease-out;
@@ -57,8 +58,8 @@
   .premium-card {
     @apply bg-white/95 rounded-3xl shadow-2xl border border-white/40;
     backdrop-filter: blur(20px);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    animation: slideUp 0.5s ease-out;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: slideUp 0.3s ease-out;
   }
 
   .premium-card:hover {
@@ -81,7 +82,7 @@
     @apply text-white px-8 py-4 rounded-2xl font-bold shadow-2xl;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     background-size: 200% 200%;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
   }
@@ -239,6 +240,11 @@
     background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
     box-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
   }
+
+  /* Dark Font Utility */
+  .text-dark {
+    @apply text-slate-900 antialiased;
+  }
 }
 
 @layer utilities {
@@ -311,13 +317,67 @@
 }
 
 @keyframes spin {
-  0% {
+  from {
     transform: rotate(0deg);
   }
 
-  100% {
+  to {
     transform: rotate(360deg);
   }
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 12s linear infinite;
+}
+
+@keyframes float-premium {
+
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+
+  33% {
+    transform: translateY(-15px) rotate(1deg);
+  }
+
+  66% {
+    transform: translateY(5px) rotate(-1deg);
+  }
+}
+
+.animate-float-premium {
+  animation: float-premium 8s ease-in-out infinite;
+}
+
+@keyframes blob {
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+}
+
+.animate-blob {
+  animation: blob 7s infinite;
 }
 
 @keyframes pulse {
@@ -351,22 +411,22 @@
 }
 
 .animate-slide-up {
-  animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: slideUp 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.5s ease-out;
+  animation: fadeIn 0.3s ease-out;
 }
 
 @keyframes float {
 
   0%,
   100% {
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 
   50% {
-    transform: translateY(-10px);
+    transform: translateY(-15px) scale(1.02);
   }
 }
 
@@ -374,12 +434,16 @@
 
   0%,
   100% {
-    transform: translateY(0) rotate(0deg);
+    transform: translateY(0) rotate(0deg) scale(1);
   }
 
   50% {
-    transform: translateY(-20px) rotate(2deg);
+    transform: translateY(-25px) rotate(3deg) scale(1.05);
   }
+}
+
+.animate-pulse {
+  animation: pulse 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 @keyframes shimmer {

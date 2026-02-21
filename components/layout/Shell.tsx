@@ -11,8 +11,8 @@ export default function Shell({ children }: { children: React.ReactNode }) {
         <div className="min-h-screen bg-slate-50 relative overflow-hidden">
             {/* Ambient Background Elements */}
             <div className="fixed top-0 left-0 w-full h-full pointer-events-none z-0">
-                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary-500/10 rounded-full blur-[120px] animate-pulse" />
-                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-500/10 rounded-full blur-[120px] animate-pulse" />
+                <div className="absolute top-[-10%] left-[-10%] w-[25%] h-[40%] bg-primary-500/5 rounded-full blur-[80px] animate-pulse" />
+                <div className="absolute bottom-[-10%] right-[-10%] w-[25%] h-[40%] bg-purple-500/5 rounded-full blur-[80px] animate-pulse" />
             </div>
 
             {/* Mobile Sidebar Overlay */}
@@ -26,7 +26,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
             {/* Sidebar */}
             <aside className={`
                 fixed top-0 left-0 bottom-0 z-[70] w-80 bg-white/80 backdrop-blur-3xl border-r border-white/20 
-                transform transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] lg:translate-x-0
+                transform transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] lg:translate-x-0
                 ${isSidebarOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full'}
             `}>
                 {/* Decorative Mesh Gradient over Sidebar */}
@@ -89,7 +89,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
             {/* Main Content Area */}
             <div className="lg:pl-80 flex flex-col min-h-screen relative z-10">
                 {/* Top Header */}
-                <header className="h-20 bg-white/40 backdrop-blur-xl border-b border-white/20 sticky top-0 z-[50] flex items-center justify-between px-6 lg:px-12 transition-all">
+                <header className="h-20 bg-white/40 backdrop-blur-md border-b border-white/20 sticky top-0 z-[50] flex items-center justify-between px-6 lg:px-12 transition-all duration-200">
                     <button
                         onClick={() => setIsSidebarOpen(true)}
                         className="p-3 bg-white/50 hover:bg-white rounded-2xl lg:hidden shadow-sm transition-all"

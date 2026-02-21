@@ -1,126 +1,195 @@
 'use client';
 
 import Shell from '@/components/layout/Shell';
-import { Truck, Package, Box, Search, MapPin, ExternalLink, Calendar, ChevronRight } from 'lucide-react';
+import { Truck, Package, Box, Search, CheckCircle2, Star, Zap, ShoppingCart, ArrowRight, ShieldCheck, TrendingUp, Sparkles } from 'lucide-react';
 
 export default function PackagesPage() {
+    const packages = [
+        {
+            id: 'STA-001',
+            name: 'Starter Merchant',
+            price: '$50',
+            duration: 'Month',
+            description: 'Perfect for new sellers starting their journey.',
+            features: ['5 Products Limit', 'Basic Analytics', 'Community Support', 'Standard Shipping Rates'],
+            color: 'from-blue-500 to-cyan-500',
+            popular: false,
+            bgLight: 'bg-blue-50',
+            textLight: 'text-blue-600'
+        },
+        {
+            id: 'PRO-002',
+            name: 'Professional Seller',
+            price: '$150',
+            duration: 'Month',
+            description: 'Scale your business with advanced tools.',
+            features: ['Unlimited Products', 'Advanced AI Insights', 'Priority 24/7 Support', 'Discounted Shipping', 'Custom Branding'],
+            color: 'from-primary-600 to-purple-700',
+            popular: true,
+            bgLight: 'bg-primary-50',
+            textLight: 'text-primary-600'
+        },
+        {
+            id: 'ENT-003',
+            name: 'Enterprise Pro',
+            price: '$450',
+            duration: 'Month',
+            description: 'Complete solution for large scale operations.',
+            features: ['Multiple Storefronts', 'Dedicated Account Manager', 'API Access', 'Global Logistics Network', 'Whiteglove Onboarding'],
+            color: 'from-slate-800 to-slate-900',
+            popular: false,
+            bgLight: 'bg-gray-100',
+            textLight: 'text-gray-900'
+        }
+    ];
+
     return (
         <Shell>
-            <div className="space-y-8">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div>
-                        <h2 className="text-3xl font-bold text-gray-900">Packages</h2>
-                        <p className="text-gray-600 focus:outline-none">Shipment tracking and logistics management</p>
+            <div className="space-y-10 pb-20 max-w-[1600px] mx-auto">
+                {/* Hero Header */}
+                <div className="text-center space-y-4 max-w-3xl mx-auto py-10">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary-50 text-primary-600 rounded-full text-xs font-black uppercase tracking-[0.2em] animate-fade-in">
+                        <Sparkles className="w-4 h-4" />
+                        Expansion Packages
                     </div>
-                    <button className="btn-primary">
-                        <Box className="w-5 h-5 mr-2 inline" />
-                        Create Shipment
-                    </button>
+                    <h1 className="text-5xl lg:text-7xl font-black text-gray-900 tracking-tight leading-none">
+                        Choose Your <span className="gradient-text">Growth Path</span>
+                    </h1>
+                    <p className="text-gray-500 text-lg font-medium leading-relaxed">
+                        Select a package that fits your business needs. Upgrade or downgrade anytime as you scale your store to new heights.
+                    </p>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                    <div className="lg:col-span-3 space-y-6">
-                        {/* Active Shipments */}
-                        <div className="glass-card overflow-hidden">
-                            <div className="p-6 border-b border-gray-100 flex items-center justify-between">
-                                <h3 className="font-bold text-gray-900 flex items-center gap-2">
-                                    <Truck className="w-5 h-5 text-primary-600" />
-                                    Active Shipments
-                                </h3>
-                                <div className="flex bg-gray-100 p-1 rounded-lg text-xs font-semibold">
-                                    <button className="px-3 py-1 bg-white shadow rounded text-primary-600">All (12)</button>
-                                    <button className="px-3 py-1 rounded text-gray-500">In Transit (8)</button>
-                                    <button className="px-3 py-1 rounded text-gray-500">Delivered (4)</button>
+                {/* Packages Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch pt-10">
+                    {packages.map((pkg, idx) => (
+                        <div key={pkg.id} className={`relative flex flex-col group ${pkg.popular ? 'md:-translate-y-4' : ''}`}>
+                            {pkg.popular && (
+                                <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20">
+                                    <div className="bg-yellow-400 text-yellow-950 text-[11px] font-black px-6 py-2 rounded-2xl shadow-xl flex items-center gap-2 animate-bounce">
+                                        <Star className="w-3.5 h-3.5 fill-current" />
+                                        MOST POPULAR
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="divide-y divide-gray-100">
-                                {[
-                                    { id: 'PKG-1025', status: 'In Transit', origin: 'SF Warehouse', dest: 'New York, NY', carrier: 'FedEx', date: '2026-01-22' },
-                                    { id: 'PKG-1024', status: 'Out for Delivery', origin: 'NJ Hub', dest: 'Jersey City, NJ', carrier: 'UPS', date: '2026-01-21' },
-                                    { id: 'PKG-1023', status: 'Processing', origin: 'Main Warehouse', dest: 'Los Angeles, CA', carrier: 'DHL', date: '2026-01-20' },
-                                    { id: 'PKG-1022', status: 'In Transit', origin: 'TX Center', dest: 'Austin, TX', carrier: 'Local', date: '2026-01-20' },
-                                ].map((pkg, idx) => (
-                                    <div key={idx} className="p-6 hover:bg-gray-50/50 transition-colors group">
-                                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                                            <div className="flex items-start gap-4">
-                                                <div className="p-3 bg-primary-50 rounded-2xl group-hover:bg-primary-100 transition-colors">
-                                                    <Package className="w-6 h-6 text-primary-600" />
-                                                </div>
-                                                <div>
-                                                    <p className="font-bold text-gray-900">{pkg.id}</p>
-                                                    <p className="text-xs text-gray-500 flex items-center gap-1">
-                                                        <Calendar className="w-3 h-3" /> {pkg.date}
-                                                    </p>
-                                                    <div className="mt-2 flex items-center gap-2">
-                                                        <span className="text-xs font-medium text-gray-600 bg-gray-100 px-2 py-0.5 rounded-full">{pkg.carrier}</span>
-                                                        <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${pkg.status === 'Out for Delivery' ? 'bg-success-100 text-success-700' :
-                                                                pkg.status === 'In Transit' ? 'bg-blue-100 text-blue-700' : 'bg-warning-100 text-warning-700'
-                                                            }`}>{pkg.status}</span>
-                                                    </div>
-                                                </div>
-                                            </div>
+                            )}
 
-                                            <div className="flex flex-1 items-center gap-4 max-w-md">
-                                                <div className="shrink-0 text-center">
-                                                    <p className="text-xs font-semibold text-gray-400 uppercase">Origin</p>
-                                                    <p className="text-sm font-bold text-gray-700">{pkg.origin}</p>
-                                                </div>
-                                                <div className="flex-1 h-px bg-dashed border-t-2 border-gray-200 relative">
-                                                    <Truck className={`w-4 h-4 text-primary-500 absolute top-1/2 -translate-y-1/2 transition-all duration-1000 ${pkg.status === 'In Transit' ? 'left-1/2' : 'left-[80%]'}`} />
-                                                </div>
-                                                <div className="shrink-0 text-center text-right">
-                                                    <p className="text-xs font-semibold text-gray-400 uppercase">Destination</p>
-                                                    <p className="text-sm font-bold text-gray-700">{pkg.dest}</p>
-                                                </div>
-                                            </div>
-
-                                            <button className="p-2 hover:bg-primary-50 rounded-xl text-primary-600 transition-all self-end md:self-center">
-                                                <ExternalLink className="w-5 h-5" />
-                                            </button>
-                                        </div>
+                            <div className={`flex-1 glass-card p-10 flex flex-col border-2 transition-all duration-700 ${pkg.popular
+                                    ? 'border-primary-500 shadow-[0_30px_60px_rgba(79,70,229,0.15)] ring-8 ring-primary-500/5'
+                                    : 'border-transparent hover:border-gray-200 hover:shadow-2xl'
+                                }`}>
+                                {/* Icon & Name */}
+                                <div className="mb-8">
+                                    <div className={`w-16 h-16 rounded-[1.5rem] bg-gradient-to-br ${pkg.color} flex items-center justify-center mb-6 shadow-xl group-hover:scale-110 transition-transform duration-500`}>
+                                        <Package className={`w-8 h-8 text-white`} />
                                     </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
+                                    <h3 className="text-2xl font-black text-gray-900">{pkg.name}</h3>
+                                    <p className="text-gray-400 font-bold text-[10px] uppercase tracking-widest mt-1">ID: {pkg.id}</p>
+                                </div>
 
-                    <div className="space-y-6">
-                        <div className="glass-card p-6">
-                            <h4 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-                                <Truck className="w-4 h-4 text-primary-600" />
-                                Carrier Performance
-                            </h4>
-                            <div className="space-y-4">
-                                {[
-                                    { name: 'FedEx', rate: 98.5, time: '1.2 days' },
-                                    { name: 'UPS', rate: 96.2, time: '2.5 days' },
-                                    { name: 'DHL', rate: 94.8, time: '3.1 days' },
-                                ].map((carrier, idx) => (
-                                    <div key={idx} className="p-3 bg-gray-50 rounded-xl">
-                                        <div className="flex justify-between items-center mb-1">
-                                            <span className="text-sm font-bold text-gray-700">{carrier.name}</span>
-                                            <span className="text-xs font-bold text-success-600">{carrier.rate}%</span>
-                                        </div>
-                                        <p className="text-[10px] text-gray-500">Avg Delivery: {carrier.time}</p>
+                                {/* Price */}
+                                <div className="mb-8 pb-8 border-b border-gray-100">
+                                    <div className="flex items-baseline gap-2">
+                                        <span className="text-5xl font-black text-gray-900 tracking-tighter">{pkg.price}</span>
+                                        <span className="text-gray-400 font-black uppercase text-xs tracking-widest">/ {pkg.duration}</span>
                                     </div>
-                                ))}
-                            </div>
-                        </div>
+                                    <p className="text-gray-500 text-sm font-medium mt-3 leading-relaxed">{pkg.description}</p>
+                                </div>
 
-                        <div className="premium-card p-6 bg-gradient-to-br from-indigo-500 to-purple-600 text-white">
-                            <Box className="w-8 h-8 opacity-50 mb-4" />
-                            <h4 className="font-bold mb-1">Quick Tracking</h4>
-                            <p className="text-xs text-white/80 mb-4 focus:outline-none">Enter tracking ID for instant info</p>
-                            <div className="relative">
-                                <input
-                                    type="text"
-                                    placeholder="Order or PKG ID"
-                                    className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-white/50 placeholder:text-white/50"
-                                />
-                                <button className="absolute right-2 top-1/2 -translate-y-1/2 p-1 bg-white/20 rounded-lg">
-                                    <ChevronRight className="w-4 h-4" />
+                                {/* Features */}
+                                <div className="flex-1 space-y-5 mb-10">
+                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">What&apos;s Included</p>
+                                    {pkg.features.map((feature, i) => (
+                                        <div key={i} className="flex items-start gap-3">
+                                            <div className="p-1 bg-success-50 rounded-lg mt-0.5 shrink-0">
+                                                <CheckCircle2 className="w-3.5 h-3.5 text-success-600" />
+                                            </div>
+                                            <span className="text-sm font-semibold text-gray-700 leading-snug">{feature}</span>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* Action */}
+                                <button className={`w-full py-5 rounded-[1.5rem] font-black transition-all flex items-center justify-center gap-2 group/btn ${pkg.popular
+                                        ? 'bg-primary-600 text-white shadow-xl shadow-primary-500/30 hover:bg-primary-500 hover:scale-[1.02]'
+                                        : 'bg-gray-100 text-gray-900 hover:bg-gray-900 hover:text-white'
+                                    }`}>
+                                    Activate Package
+                                    <ArrowRight className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" />
                                 </button>
                             </div>
+                        </div>
+                    ))}
+                </div>
+
+                {/* Trust Section */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-10 px-6">
+                    {[
+                        { icon: ShieldCheck, title: 'Secure Payment', desc: 'Encrypted transactions with fraud protection.' },
+                        { icon: Zap, title: 'Instant Activation', desc: 'Your features go live immediately after upgrade.' },
+                        { icon: TrendingUp, title: 'Scale Freely', desc: 'Switch plans anytime as your volume grows.' },
+                    ].map((trust, i) => (
+                        <div key={i} className="flex items-center gap-4 group">
+                            <div className="p-3 bg-white shadow-lg rounded-2xl group-hover:scale-110 transition-transform">
+                                <trust.icon className="w-6 h-6 text-primary-600" />
+                            </div>
+                            <div>
+                                <h4 className="font-black text-gray-900 leading-none">{trust.title}</h4>
+                                <p className="text-xs text-gray-400 font-medium mt-1">{trust.desc}</p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                {/* Legacy Tracking Section (moved to bottom as secondary) */}
+                <div className="pt-20 border-t border-gray-100">
+                    <div className="flex items-center justify-between mb-8">
+                        <div>
+                            <h3 className="text-2xl font-black text-gray-900">Shipment Logistics</h3>
+                            <p className="text-gray-400 font-medium">Track your existing packages and container shipments</p>
+                        </div>
+                        <button className="flex items-center gap-2 text-primary-600 font-black text-sm hover:gap-3 transition-all">
+                            Manage All Shipments
+                            <ArrowRight className="w-5 h-5" />
+                        </button>
+                    </div>
+
+                    <div className="glass-card overflow-hidden">
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-left">
+                                <thead className="bg-gray-50/50 text-gray-400 font-black text-[10px] uppercase tracking-widest border-b border-gray-100">
+                                    <tr>
+                                        <th className="px-8 py-5">Shipment ID</th>
+                                        <th className="px-8 py-5">Carrier</th>
+                                        <th className="px-8 py-5">Destination</th>
+                                        <th className="px-8 py-5">Status</th>
+                                        <th className="px-8 py-5 text-right">Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-gray-100">
+                                    {[
+                                        { id: 'PKG-1025', carrier: 'FedEx', dest: 'New York, NY', status: 'In Transit', date: 'Jan 22, 2026' },
+                                        { id: 'PKG-1024', carrier: 'UPS', dest: 'London, UK', status: 'Delivered', date: 'Jan 20, 2026' },
+                                    ].map((ship, i) => (
+                                        <tr key={i} className="hover:bg-gray-50/50 transition-colors group cursor-pointer">
+                                            <td className="px-8 py-6 font-bold text-gray-900 flex items-center gap-3">
+                                                <div className="p-2 bg-gray-100 rounded-lg group-hover:bg-primary-100 group-hover:text-primary-600 transition-colors">
+                                                    <Truck className="w-4 h-4" />
+                                                </div>
+                                                {ship.id}
+                                            </td>
+                                            <td className="px-8 py-6 text-gray-500 font-medium">{ship.carrier}</td>
+                                            <td className="px-8 py-6 text-gray-600 font-semibold">{ship.dest}</td>
+                                            <td className="px-8 py-6">
+                                                <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${ship.status === 'Delivered' ? 'bg-success-50 text-success-600' : 'bg-blue-50 text-blue-600'
+                                                    }`}>
+                                                    {ship.status}
+                                                </span>
+                                            </td>
+                                            <td className="px-8 py-6 text-right text-gray-400 font-bold">{ship.date}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>

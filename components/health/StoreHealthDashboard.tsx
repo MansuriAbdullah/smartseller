@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { StoreHealthScore, FactorScore } from '@/types';
-import { TrendingUp, TrendingDown, Minus, AlertCircle, CheckCircle, Award, Sparkles } from 'lucide-react';
+import { TrendingUp, TrendingDown, Minus, AlertCircle, CheckCircle, Award, Sparkles, Activity } from 'lucide-react';
 
 interface StoreHealthDashboardProps {
     healthScore: StoreHealthScore;
@@ -69,63 +69,79 @@ export default function StoreHealthDashboard({ healthScore }: StoreHealthDashboa
             strokeEnd: '#059669',
             text: 'text-emerald-600',
             bg: 'bg-emerald-50',
-            gradeBg: 'bg-amber-50',
-            gradeText: 'text-amber-700',
+            gradeBg: 'bg-emerald-100',
+            gradeText: 'text-emerald-800',
+            glow: 'shadow-emerald-500/30',
         },
         orange: {
             stroke: '#F59E0B',
             strokeEnd: '#D97706',
             text: 'text-orange-500',
             bg: 'bg-orange-50',
-            gradeBg: 'bg-amber-50',
-            gradeText: 'text-amber-700',
+            gradeBg: 'bg-orange-100',
+            gradeText: 'text-orange-800',
+            glow: 'shadow-orange-500/30',
         },
         warning: {
             stroke: '#EAB308',
             strokeEnd: '#CA8A04',
             text: 'text-yellow-600',
             bg: 'bg-yellow-50',
-            gradeBg: 'bg-amber-50',
-            gradeText: 'text-amber-700',
+            gradeBg: 'bg-yellow-100',
+            gradeText: 'text-yellow-800',
+            glow: 'shadow-yellow-500/30',
         },
         danger: {
             stroke: '#EF4444',
             strokeEnd: '#DC2626',
             text: 'text-red-500',
             bg: 'bg-red-50',
-            gradeBg: 'bg-red-50',
-            gradeText: 'text-red-700',
+            gradeBg: 'bg-red-100',
+            gradeText: 'text-red-800',
+            glow: 'shadow-red-500/30',
         },
     };
 
     const colors = colorConfig[scoreColor];
 
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Main Score Card - Centered Design */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
+            {/* Main Score Card - Premium Design */}
             <div className={`premium-card relative overflow-hidden transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-                {/* Decorative Background Elements */}
-                <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-orange-100/50 to-transparent rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl" />
-                <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-primary-100/50 to-transparent rounded-full translate-y-1/2 -translate-x-1/2 blur-xl" />
+                {/* Dynamic Background Gradients */}
+                <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-primary-100/40 via-purple-100/20 to-transparent rounded-full -translate-y-1/3 translate-x-1/3 blur-3xl" />
+                <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-orange-100/40 via-yellow-100/20 to-transparent rounded-full translate-y-1/3 -translate-x-1/3 blur-3xl" />
 
-                <div className="relative z-10 p-8 md:p-10 flex flex-col items-center">
+                <div className="relative z-10 p-6 md:p-10 flex flex-col items-center text-center">
+                    {/* Header with Icon */}
+                    <div className="flex flex-col items-center gap-2 mb-8 animate-fade-in">
+                        <div className={`p-3 rounded-2xl ${colors.bg} mb-2 shadow-sm transform transition-transform hover:scale-110 duration-300`}>
+                            <Activity className={`w-8 h-8 ${colors.text}`} />
+                        </div>
+                        <h2 className="text-2xl md:text-4xl font-black text-gray-900 tracking-tight">
+                            Store Health Score
+                        </h2>
+                        <p className="text-gray-500 font-medium">Real-time performance metrics</p>
+                    </div>
+
                     {/* Circular Progress */}
-                    <div className="relative mb-6">
+                    <div className="relative mb-8 group cursor-default">
                         {/* Outer Glow Effect */}
                         <div
-                            className="absolute inset-0 rounded-full blur-xl opacity-30 transition-all duration-1000"
+                            className={`absolute inset-0 rounded-full blur-2xl opacity-20 transition-all duration-1000 group-hover:opacity-40 scale-110`}
                             style={{ backgroundColor: colors.stroke }}
                         />
 
-                        <svg className="w-52 h-52 md:w-56 md:h-56 transform -rotate-90 drop-shadow-lg" viewBox="0 0 200 200">
-                            {/* Background Circle */}
+                        <svg className="w-60 h-60 md:w-72 md:h-72 transform -rotate-90 drop-shadow-2xl filter" viewBox="0 0 200 200">
+                            {/* Background Circle with Glass Effect */}
                             <circle
                                 cx="100"
                                 cy="100"
                                 r={radius}
                                 fill="none"
                                 stroke="#F3F4F6"
-                                strokeWidth="14"
+                                strokeWidth="12"
+                                className="opacity-50"
                             />
 
                             {/* Progress Circle with Gradient */}
@@ -135,13 +151,13 @@ export default function StoreHealthDashboard({ healthScore }: StoreHealthDashboa
                                 r={radius}
                                 fill="none"
                                 stroke={`url(#scoreGradient-${scoreColor})`}
-                                strokeWidth="14"
+                                strokeWidth="12"
                                 strokeLinecap="round"
                                 strokeDasharray={circumference}
                                 strokeDashoffset={strokeDashoffset}
                                 className="transition-all duration-1000 ease-out"
                                 style={{
-                                    filter: 'drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1))',
+                                    filter: 'drop-shadow(0 0 6px rgba(0, 0, 0, 0.1))',
                                 }}
                             />
 
@@ -149,67 +165,55 @@ export default function StoreHealthDashboard({ healthScore }: StoreHealthDashboa
                             <defs>
                                 <linearGradient id={`scoreGradient-${scoreColor}`} x1="0%" y1="0%" x2="100%" y2="100%">
                                     <stop offset="0%" stopColor={colors.stroke} />
+                                    <stop offset="50%" stopColor={colors.stroke} />
                                     <stop offset="100%" stopColor={colors.strokeEnd} />
                                 </linearGradient>
                             </defs>
                         </svg>
 
                         {/* Score Content (Centered Inside Circle) */}
-                        <div className="absolute inset-0 flex flex-col items-center justify-center">
-                            <span className={`text-5xl md:text-6xl font-black ${colors.text} tracking-tight leading-none`}>
-                                {animatedScore.toFixed(1)}
+                        <div className="absolute inset-0 flex flex-col items-center justify-center animate-scale-in">
+                            <div className="relative flex items-baseline justify-center -mr-2">
+                                <span className={`text-[5rem] md:text-[6rem] font-black bg-clip-text text-transparent bg-gradient-to-br from-gray-900 to-gray-600 tracking-tighter leading-none filter drop-shadow-sm`}>
+                                    {animatedScore.toFixed(0)}
+                                </span>
+                                <span className="text-3xl md:text-4xl font-extrabold text-gray-400 ml-0.5">
+                                    .{Math.round(animatedScore % 1 * 10)}
+                                </span>
+                            </div>
+                            <span className="text-xs font-bold text-gray-400 mt-0 uppercase tracking-[0.2em]">
+                                SCORE / 100
                             </span>
-                            <span className="text-xl md:text-2xl font-bold text-gray-400 mt-1">
-                                / 100
-                            </span>
-                            <div className={`mt-3 px-5 py-1.5 rounded-full ${colors.gradeBg} ${colors.gradeText} font-bold text-base shadow-sm`}>
+
+                            {/* Grade Logic */}
+                            <div className={`mt-4 px-6 py-1.5 rounded-full ${colors.gradeBg} ${colors.gradeText} ${colors.glow} font-black text-xl md:text-2xl shadow-lg ring-4 ring-white/60 backdrop-blur-md transform transition-transform group-hover:scale-110 duration-500`}>
                                 {grade}
                             </div>
                         </div>
                     </div>
 
-                    {/* Title with Icon */}
-                    <div className="flex items-center gap-3 mb-3">
-                        <div className={`p-2 rounded-xl ${colors.bg}`}>
-                            <Award className={`w-6 h-6 ${colors.text}`} />
-                        </div>
-                        <h2 className="text-2xl md:text-3xl font-black text-gray-900">
-                            Store Health Score
-                        </h2>
-                    </div>
-
                     {/* Status Message */}
-                    <p className="text-gray-500 text-center text-base md:text-lg mb-6 max-w-xs">
-                        {score >= 90 && "Excellent! Your store is performing exceptionally well."}
-                        {score >= 75 && score < 90 && "Good performance! Keep up the great work."}
-                        {score >= 60 && score < 75 && "Your store needs some attention to improve."}
-                        {score < 60 && "Critical! Immediate action required to improve store health."}
-                    </p>
+                    <div className="max-w-md mx-auto space-y-4">
+                        <p className="text-gray-600 text-base md:text-lg font-medium leading-relaxed">
+                            {score >= 90 && "🚀 Excellent! Your store is performing exceptionally well."}
+                            {score >= 75 && score < 90 && "✨ Good performance! You're on the right track."}
+                            {score >= 60 && score < 75 && "⚠️ Your store needs some attention to improve performance."}
+                            {score < 60 && "🛑 Critical! Immediate action required to improve store health."}
+                        </p>
 
-                    {/* 5-Star Seller Badge */}
-                    {score >= 85 && (
-                        <div className="group relative">
-                            <div className="absolute inset-0 bg-gradient-to-r from-primary-400 to-purple-400 rounded-full blur-md opacity-50 group-hover:opacity-70 transition-opacity" />
-                            <button className="relative flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary-50 to-purple-50 border-2 border-primary-200 rounded-full font-bold text-primary-700 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
-                                <Award className="w-5 h-5 text-primary-600" />
-                                <span>5-Star Seller</span>
-                                <Sparkles className="w-4 h-4 text-primary-500 animate-pulse" />
-                            </button>
-                        </div>
-                    )}
-
-                    {/* Additional Status Badges */}
-                    <div className="flex flex-wrap gap-3 justify-center mt-4">
-                        {score >= 90 && (
-                            <div className="flex items-center gap-2 px-4 py-2 bg-emerald-100 text-emerald-700 rounded-full font-semibold text-sm shadow-sm animate-fade-in">
-                                <CheckCircle className="w-4 h-4" />
-                                Top Performer
-                            </div>
-                        )}
-                        {score < 70 && (
-                            <div className="flex items-center gap-2 px-4 py-2 bg-red-100 text-red-700 rounded-full font-semibold text-sm shadow-sm animate-fade-in">
-                                <AlertCircle className="w-4 h-4" />
-                                Needs Improvement
+                        {/* 5-Star Seller Badge */}
+                        {score >= 85 && (
+                            <div className="inline-block pt-2">
+                                <div className="group/badge relative">
+                                    <div className="absolute inset-0 bg-gradient-to-r from-primary-400 to-purple-400 rounded-full blur-md opacity-40 group-hover/badge:opacity-60 transition-opacity animate-pulse-slow" />
+                                    <div className="relative flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary-50 to-purple-50 border border-primary-200/50 rounded-full">
+                                        <Award className="w-5 h-5 text-primary-600" />
+                                        <span className="font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary-700 to-purple-700">
+                                            Top Rated Seller
+                                        </span>
+                                        <Sparkles className="w-4 h-4 text-amber-500 animate-spin-slow" />
+                                    </div>
+                                </div>
                             </div>
                         )}
                     </div>
@@ -217,15 +221,18 @@ export default function StoreHealthDashboard({ healthScore }: StoreHealthDashboa
             </div>
 
             {/* Factor Breakdown */}
-            <div className={`premium-card p-6 md:p-8 transition-all duration-700 delay-100 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-                <div className="flex items-center gap-3 mb-6">
-                    <div className="p-2.5 bg-gradient-to-br from-primary-100 to-purple-100 rounded-xl">
-                        <TrendingUp className="w-5 h-5 text-primary-600" />
+            <div className={`premium-card p-6 md:p-8 flex flex-col transition-all duration-700 delay-100 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+                <div className="flex items-center gap-4 mb-8 pb-4 border-b border-gray-100">
+                    <div className="p-3 bg-primary-50 rounded-2xl shadow-inner">
+                        <TrendingUp className="w-6 h-6 text-primary-600" />
                     </div>
-                    <h3 className="text-xl font-black text-gray-900">Performance Breakdown</h3>
+                    <div>
+                        <h3 className="text-xl md:text-2xl font-black text-gray-900">Performance Breakdown</h3>
+                        <p className="text-sm text-gray-500 font-medium">Detailed factor analysis</p>
+                    </div>
                 </div>
 
-                <div className="space-y-4">
+                <div className="flex-1 space-y-4 overflow-y-auto custom-scrollbar pr-2 max-h-[600px]">
                     {Object.entries(factorDetails).map(([key, factor], index) => (
                         <FactorCard
                             key={key}
@@ -256,10 +263,10 @@ function FactorCard({ name, factor, delay = 0, isVisible = true }: FactorCardPro
     };
 
     const getBenchmarkConfig = () => {
-        if (factor.benchmark === 'excellent') return { color: 'emerald', bg: 'bg-emerald-100', text: 'text-emerald-700', bar: 'from-emerald-400 to-emerald-600' };
-        if (factor.benchmark === 'good') return { color: 'blue', bg: 'bg-blue-100', text: 'text-blue-700', bar: 'from-blue-400 to-blue-600' };
-        if (factor.benchmark === 'average') return { color: 'amber', bg: 'bg-amber-100', text: 'text-amber-700', bar: 'from-amber-400 to-amber-600' };
-        return { color: 'red', bg: 'bg-red-100', text: 'text-red-700', bar: 'from-red-400 to-red-600' };
+        if (factor.benchmark === 'excellent') return { color: 'emerald', bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-100', bar: 'from-emerald-400 to-emerald-600' };
+        if (factor.benchmark === 'good') return { color: 'blue', bg: 'bg-blue-50', text: 'text-blue-700', border: 'border-blue-100', bar: 'from-blue-400 to-blue-600' };
+        if (factor.benchmark === 'average') return { color: 'amber', bg: 'bg-amber-50', text: 'text-amber-700', border: 'border-amber-100', bar: 'from-amber-400 to-amber-600' };
+        return { color: 'red', bg: 'bg-red-50', text: 'text-red-700', border: 'border-red-100', bar: 'from-red-400 to-red-600' };
     };
 
     const config = getBenchmarkConfig();
@@ -267,48 +274,53 @@ function FactorCard({ name, factor, delay = 0, isVisible = true }: FactorCardPro
 
     return (
         <div
-            className={`p-4 bg-gradient-to-br from-gray-50 to-white rounded-xl border border-gray-100 hover:border-gray-200 hover:shadow-md transition-all duration-300 group ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4'}`}
-            style={{ transitionDelay: `${delay}ms` }}
+            className={`p-5 rounded-2xl border transition-all duration-500 group hover:shadow-lg hover:-translate-y-1 bg-white ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4'}`}
+            style={{
+                transitionDelay: `${delay}ms`,
+                borderColor: 'rgba(229, 231, 235, 0.6)'
+            }}
         >
-            <div className="flex items-start justify-between mb-3">
+            <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                        <h4 className="font-bold text-gray-900 group-hover:text-primary-700 transition-colors">{name}</h4>
-                        {getTrendIcon()}
+                    <div className="flex items-center gap-2 mb-1.5">
+                        <h4 className="font-bold text-gray-900 group-hover:text-primary-600 transition-colors text-lg">{name}</h4>
+                        <div className="p-1 rounded-full bg-gray-50">{getTrendIcon()}</div>
                     </div>
-                    <p className="text-xs text-gray-500 font-medium">
-                        Weightage: {factor.weightage}% • Contribution: {factor.contribution.toFixed(2)}
-                    </p>
+                    <div className="flex items-center gap-2 text-xs font-semibold text-gray-500">
+                        <span className="bg-gray-100 px-2 py-0.5 rounded text-gray-600">Weight: {factor.weightage}%</span>
+                        <span>•</span>
+                        <span>Contr: {factor.contribution.toFixed(1)}</span>
+                    </div>
                 </div>
-                <span className={`px-3 py-1.5 rounded-full text-xs font-bold capitalize ${config.bg} ${config.text}`}>
+                <span className={`px-4 py-1.5 rounded-xl text-xs font-bold uppercase tracking-wider border ${config.bg} ${config.text} ${config.border}`}>
                     {factor.benchmark}
                 </span>
             </div>
 
             {/* Progress Bar */}
-            <div className="mb-3">
+            <div className="mb-4">
                 <div className="flex items-center justify-between text-xs mb-2">
-                    <span className="text-gray-500 font-medium">Current: {factor.value.toFixed(1)}%</span>
-                    <span className="font-bold text-gray-700">
-                        {factor.contribution.toFixed(1)} / {factor.weightage} pts
+                    <span className="text-gray-500 font-medium">Performance</span>
+                    <span className="font-bold text-gray-900">
+                        {Math.round((factor.value / 100) * 100)}%
                     </span>
                 </div>
-                <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden shadow-inner">
+                <div className="h-3 bg-gray-100 rounded-full overflow-hidden p-[2px]">
                     <div
-                        className={`h-full bg-gradient-to-r ${config.bar} rounded-full transition-all duration-1000 ease-out relative overflow-hidden`}
+                        className={`h-full bg-gradient-to-r ${config.bar} rounded-full transition-all duration-1000 ease-out relative overflow-hidden shadow-sm`}
                         style={{ width: `${progressPercent}%` }}
                     >
                         {/* Shimmer effect */}
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full animate-[shimmer_2s_infinite]" />
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full animate-[shimmer_2s_infinite]" />
                     </div>
                 </div>
             </div>
 
             {/* Tip */}
             {factor.tip && (
-                <div className="flex items-start gap-2 text-xs text-gray-600 bg-gradient-to-r from-primary-50/50 to-purple-50/50 p-3 rounded-lg border border-primary-100/50">
-                    <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0 text-primary-500" />
-                    <span className="leading-relaxed">{factor.tip}</span>
+                <div className="flex items-start gap-3 text-sm text-gray-600 bg-gray-50/80 p-4 rounded-xl border border-gray-100 group-hover:bg-primary-50/30 group-hover:border-primary-100/50 transition-colors">
+                    <AlertCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-primary-500" />
+                    <span className="leading-relaxed font-medium">{factor.tip}</span>
                 </div>
             )}
         </div>

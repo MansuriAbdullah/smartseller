@@ -32,6 +32,9 @@ const groups = [
             { name: 'Storehouse', href: '/storehouse', icon: Warehouse },
             { name: 'Order', href: '/orders', icon: ShoppingCart },
             { name: 'Package', href: '/packages', icon: Truck },
+            { name: 'Spread Packages', href: '/spread-packages', icon: Box },
+            { name: 'Refund Requests', href: '/refunds', icon: ShoppingCart },
+            { name: 'Product Queries', href: '/queries', icon: Box },
             { name: 'Suppliers', href: '/suppliers', icon: Users },
         ]
     },
@@ -39,8 +42,18 @@ const groups = [
         name: 'Accounts & Security',
         items: [
             { name: 'Money Withdraw', href: '/withdraw', icon: Wallet },
+            { name: 'Commission History', href: '/commissions', icon: FileText },
+            { name: 'Affiliate System', href: '/affiliate', icon: Users },
             { name: 'Shop Setting', href: '/settings', icon: Settings },
             { name: 'Transaction Password', href: '/password', icon: Lock },
+        ]
+    },
+    {
+        name: 'Support & Media',
+        items: [
+            { name: 'Conversations', href: '/conversations', icon: Users },
+            { name: 'Support Ticket', href: '/support', icon: FileText },
+            { name: 'Uploaded Files', href: '/uploads', icon: Box },
         ]
     }
 ];
@@ -65,7 +78,7 @@ export default function Navigation() {
                                 <Link
                                     key={item.name}
                                     href={item.href}
-                                    className={`relative flex items-center justify-between group px-4 py-3 rounded-xl font-semibold transition-all duration-300 ${isActive
+                                    className={`relative flex items-center justify-between group px-4 py-3 rounded-xl font-semibold transition-all duration-200 ${isActive
                                         ? 'text-white'
                                         : 'text-gray-500 hover:text-primary-600 hover:bg-white/50'
                                         }`}

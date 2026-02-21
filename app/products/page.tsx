@@ -107,39 +107,41 @@ export default function ProductsPage() {
                     </div>
                 ) : (
                     <div className="glass-card overflow-hidden">
-                        <table className="w-full text-left border-collapse">
-                            <thead className="bg-gray-50 border-b border-gray-100">
-                                <tr>
-                                    <th className="px-6 py-4 text-sm font-semibold text-gray-700">Product</th>
-                                    <th className="px-6 py-4 text-sm font-semibold text-gray-700">Category</th>
-                                    <th className="px-6 py-4 text-sm font-semibold text-gray-700">Price</th>
-                                    <th className="px-6 py-4 text-sm font-semibold text-gray-700">Stock</th>
-                                    <th className="px-6 py-4 text-sm font-semibold text-gray-700">Status</th>
-                                    <th className="px-6 py-4 text-sm font-semibold text-gray-700">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-100">
-                                {mockProducts.map((product) => (
-                                    <tr key={product.id} className="hover:bg-gray-50/50 transition-colors">
-                                        <td className="px-6 py-4 font-medium text-gray-900">{product.name}</td>
-                                        <td className="px-6 py-4 text-gray-600">{product.category}</td>
-                                        <td className="px-6 py-4 font-bold text-gray-900">${product.price.toLocaleString()}</td>
-                                        <td className="px-6 py-4 text-gray-600">{product.stock}</td>
-                                        <td className="px-6 py-4">
-                                            <span className={`badge ${product.stock > 10 ? 'badge-success' : 'badge-warning'}`}>
-                                                {product.stock > 10 ? 'In Stock' : 'Low Stock'}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center gap-2">
-                                                <button className="p-2 hover:bg-gray-100 rounded-lg hover:text-primary-600 transition-all"><Edit className="w-4 h-4" /></button>
-                                                <button className="p-2 hover:bg-gray-100 rounded-lg hover:text-danger-600 transition-all"><Trash2 className="w-4 h-4" /></button>
-                                            </div>
-                                        </td>
+                        <div className="overflow-x-auto custom-scrollbar">
+                            <table className="w-full text-left border-collapse min-w-[800px] md:min-w-0">
+                                <thead className="bg-gray-50 border-b border-gray-100">
+                                    <tr>
+                                        <th className="px-6 py-4 text-sm font-semibold text-gray-700 whitespace-nowrap">Product</th>
+                                        <th className="px-6 py-4 text-sm font-semibold text-gray-700 whitespace-nowrap">Category</th>
+                                        <th className="px-6 py-4 text-sm font-semibold text-gray-700 whitespace-nowrap">Price</th>
+                                        <th className="px-6 py-4 text-sm font-semibold text-gray-700 whitespace-nowrap">Stock</th>
+                                        <th className="px-6 py-4 text-sm font-semibold text-gray-700 whitespace-nowrap">Status</th>
+                                        <th className="px-6 py-4 text-sm font-semibold text-gray-700 whitespace-nowrap">Actions</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody className="divide-y divide-gray-100">
+                                    {mockProducts.map((product) => (
+                                        <tr key={product.id} className="hover:bg-gray-50/50 transition-colors">
+                                            <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">{product.name}</td>
+                                            <td className="px-6 py-4 text-gray-600 whitespace-nowrap">{product.category}</td>
+                                            <td className="px-6 py-4 font-bold text-gray-900 whitespace-nowrap">${product.price.toLocaleString()}</td>
+                                            <td className="px-6 py-4 text-gray-600 whitespace-nowrap">{product.stock}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <span className={`badge ${product.stock > 10 ? 'badge-success' : 'badge-warning'}`}>
+                                                    {product.stock > 10 ? 'In Stock' : 'Low Stock'}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <div className="flex items-center gap-2">
+                                                    <button className="p-2 hover:bg-gray-100 rounded-lg hover:text-primary-600 transition-all"><Edit className="w-4 h-4" /></button>
+                                                    <button className="p-2 hover:bg-gray-100 rounded-lg hover:text-danger-600 transition-all"><Trash2 className="w-4 h-4" /></button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 )}
             </div>

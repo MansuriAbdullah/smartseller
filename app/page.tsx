@@ -26,9 +26,7 @@ export default function DashboardPage() {
 
     // Simulate data fetching
     useEffect(() => {
-        const timer = setTimeout(() => {
-            setIsLoading(false);
-        }, 800);
+        setIsLoading(false);
 
         const interval = setInterval(() => {
             setStats(prev => ({
@@ -38,7 +36,6 @@ export default function DashboardPage() {
         }, 15000);
 
         return () => {
-            clearTimeout(timer);
             clearInterval(interval);
         };
     }, []);
@@ -100,32 +97,36 @@ export default function DashboardPage() {
                         </div>
 
                         {/* Interactive Metric Highlight */}
-                        <div className="relative group/metric animate-scale-in stagger-2 hidden lg:block">
-                            <div className="glass-card !bg-white/10 border-white/20 p-8 w-72 h-84 backdrop-blur-2xl shadow-2xl rotate-3 group-hover/metric:rotate-0 transition-transform duration-700 relative overflow-hidden">
-                                <div className="space-y-6 relative z-10">
+                        <div className="relative group/metric animate-float-premium hidden lg:block">
+                            <div className="glass-card !bg-white/95 border-white/40 p-10 w-80 h-96 backdrop-blur-3xl shadow-[0_30px_70px_rgba(0,0,0,0.15)] rotate-3 group-hover/metric:rotate-0 transition-all duration-1000 relative overflow-hidden">
+                                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-success-400 to-emerald-500"></div>
+                                <div className="space-y-8 relative z-10">
                                     <div className="flex justify-between items-start">
-                                        <div className="p-3 bg-white/10 rounded-2xl backdrop-blur-md">
-                                            <Activity className="w-8 h-8 text-white" />
+                                        <div className="p-4 bg-success-50 rounded-[1.5rem] shadow-inner">
+                                            <Activity className="w-10 h-10 text-success-600" />
                                         </div>
-                                        <span className="text-[10px] font-black text-white px-3 py-1 bg-[#00C06A] rounded-full tracking-wider shadow-lg shadow-emerald-900/20">ACTIVE</span>
+                                        <span className="text-[11px] font-black text-white px-4 py-1.5 bg-[#00C06A] rounded-full tracking-wider shadow-lg shadow-emerald-900/20">ACTIVE</span>
                                     </div>
-                                    <div className="space-y-1">
-                                        <p className="text-white/60 font-bold text-[10px] uppercase tracking-[0.2em]">Store Health</p>
-                                        <h4 className="text-[3.5rem] font-black text-white leading-none tracking-tight">98.4%</h4>
+                                    <div className="space-y-2">
+                                        <p className="text-slate-400 font-black text-[11px] uppercase tracking-[0.25em]">Store Health Index</p>
+                                        <h4 className="text-[4rem] font-black text-slate-900 leading-none tracking-tighter">98.4%</h4>
                                     </div>
-                                    <div className="h-1.5 bg-white/20 rounded-full overflow-hidden">
-                                        <div className="h-full bg-white w-[98%] shadow-[0_0_10px_rgba(255,255,255,0.5)]"></div>
+                                    <div className="h-2 bg-slate-100 rounded-full overflow-hidden shadow-inner">
+                                        <div className="h-full bg-gradient-to-r from-success-400 to-emerald-500 w-[98.4%] shadow-[0_0_15px_rgba(16,185,129,0.3)] animate-pulse"></div>
                                     </div>
-                                    <p className="text-white/70 text-[11px] font-medium leading-relaxed italic">
-                                        &quot;Excellent response time and order fulfillment rating.&quot;
+                                    <p className="text-slate-500 text-sm font-semibold leading-relaxed italic border-l-4 border-success-200 pl-4 py-1 bg-success-50/50 rounded-r-xl">
+                                        &quot;Excellent response time and order fulfillment rating detected.&quot;
                                     </p>
                                 </div>
                             </div>
 
-                            {/* Uptime Card - Updated to match image (White card, green text) */}
-                            <div className="absolute -bottom-6 -right-6 bg-white p-5 rounded-[1.5rem] shadow-2xl shadow-black/20 -rotate-6 group-hover/metric:-rotate-3 transition-transform duration-700 border border-gray-100">
-                                <p className="text-gray-300 text-[9px] font-black tracking-[0.2em] uppercase mb-1">Uptime</p>
-                                <p className="text-2xl font-black text-[#00C06A]">99.9%</p>
+                            {/* Uptime Card - Enhanced for visibility */}
+                            <div className="absolute -bottom-6 -right-10 bg-white p-6 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.2)] -rotate-6 group-hover/metric:-rotate-3 transition-transform duration-700 border border-slate-100 ring-4 ring-white">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-2 h-2 bg-success-500 rounded-full animate-ping"></div>
+                                    <p className="text-slate-400 text-[10px] font-black tracking-[0.2em] uppercase">Uptime</p>
+                                </div>
+                                <p className="text-3xl font-black text-slate-900 mt-1">99.9%</p>
                             </div>
                         </div>
                     </div>
