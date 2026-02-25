@@ -14,7 +14,8 @@ import {
     Settings,
     Lock,
     ChevronRight,
-    Circle
+    Circle,
+    IndianRupee
 } from 'lucide-react';
 
 const groups = [
@@ -41,6 +42,7 @@ const groups = [
     {
         name: 'Accounts & Security',
         items: [
+            { name: 'Make Payment', href: '/payment', icon: IndianRupee },
             { name: 'Money Withdraw', href: '/withdraw', icon: Wallet },
             { name: 'Commission History', href: '/commissions', icon: FileText },
             { name: 'Affiliate System', href: '/affiliate', icon: Users },
