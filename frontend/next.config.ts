@@ -1,12 +1,20 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+import type { NextConfig } from 'next';
+
+const nextConfig: NextConfig = {
     images: {
-        domains: ['localhost'],
-    },
-    experimental: {
-        turbopack: {
-            root: process.cwd(),
-        },
+        remotePatterns: [
+            {
+                protocol: 'http',
+                hostname: 'localhost',
+                port: '5000',
+                pathname: '/uploads/**',
+            },
+            {
+                protocol: 'https',
+                hostname: '*.vercel.app',
+                pathname: '/uploads/**',
+            },
+        ],
     },
 };
 
