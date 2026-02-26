@@ -11,6 +11,11 @@ const nextConfig: NextConfig = {
             },
             {
                 protocol: 'https',
+                hostname: 'smartseller-backend.vercel.app',
+                pathname: '/uploads/**',
+            },
+            {
+                protocol: 'https',
                 hostname: '*.vercel.app',
                 pathname: '/uploads/**',
             },
