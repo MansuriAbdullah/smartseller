@@ -2,32 +2,42 @@ const app = require('./app');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 
-const startServer = async () => {
+// Load environment variables
+dotenv.config();
+
+// Initialize DB connection and rotateCode (runs once on cold start)
+const init = async () => {
     try {
-        // Load environment variables
-        dotenv.config();
-
-        // Connect to Database
         await connectDB();
+        const { rotateCode } = require('./controllers/settingsController');
+        await rotateCode();
+        console.log('Server initialized successfully');
+    } catch (error) {
+        console.error(`Initialization error: ${error.message}`);
+    }
+};
 
+// On Vercel (serverless), we export the app directly
+// On local dev, we listen on a port
+if (process.env.NODE_ENV !== 'production') {
+    // Local development - run as normal server
+    init().then(() => {
         const PORT = process.env.PORT || 5000;
         const { rotateCode } = require('./controllers/settingsController');
 
-        // Rotate Invitation Code every 5 minutes (300000 ms)
+        // Rotate Invitation Code every 5 minutes (only in non-serverless)
         setInterval(() => {
             rotateCode();
-        }, 300000); // 5 minutes
-
-        // Initial generation if needed
-        await rotateCode();
+        }, 300000);
 
         app.listen(PORT, () => {
             console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
         });
-    } catch (error) {
-        console.error(`Error starting server: ${error.message}`);
-        process.exit(1);
-    }
-};
+    });
+} else {
+    // Production (Vercel serverless) - init DB on cold start
+    init();
+}
 
-startServer();
+// Export for Vercel serverless
+module.exports = app;

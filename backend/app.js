@@ -19,11 +19,26 @@ const app = express();
 
 // Middleware
 app.use(express.json());
+// CORS - allowed origins
+const allowedOrigins = [
+    'https://smartseller.vercel.app',
+    'http://localhost:3000',
+    'http://localhost:3001',
+];
+
 app.use(cors({
-    origin: '*', // Allow all origins
+    origin: function (origin, callback) {
+        // Allow requests with no origin (mobile apps, curl, Postman)
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true // if you need cookies
+    credentials: true,
 }));
 app.use(helmet({
     crossOriginResourcePolicy: false,
