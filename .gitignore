@@ -2,15 +2,14 @@
 node_modules/
 **/node_modules/
 
-# Environment files
+# Environment files - sensitive files only
 .env
 .env.local
-.env.production
-.env.development
 **/.env
 **/.env.local
-**/.env.production
-**/.env.development
+# backend .env is sensitive (has DB password, JWT secret)
+backend/.env
+# NOTE: frontend/.env.production is safe to commit (only NEXT_PUBLIC_ vars)
 
 # Build outputs
 .next/
