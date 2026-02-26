@@ -88,6 +88,7 @@ export default function PackagesPage() {
                     setIsModalOpen(false);
                     setMessage('');
                     setTransPassword('');
+                    router.push('/'); // Force refresh to show new balance in header
                 }, 2000);
             }
         } catch (error: any) {

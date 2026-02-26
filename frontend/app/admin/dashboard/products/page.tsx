@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
-import { Search, Trash2, Plus, Edit2, RefreshCw, X, Package } from 'lucide-react';
+import { useEffect, useState, useCallback, Suspense } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { Search, Trash2, Plus, Edit2, RefreshCw, X, Package, Store, ArrowLeft } from 'lucide-react';
 
 const API = process.env.NEXT_PUBLIC_API_URL;
 
@@ -18,7 +19,12 @@ type ProductForm = {
 
 const emptyForm: ProductForm = { name: '', description: '', price: '', selling_price: '', profit: '', category: '', brand: '', image: '' };
 
-export default function AdminProductsPage() {
+function AdminProductsPage() {
+    const searchParams = useSearchParams();
+    const router = useRouter();
+    const sellerIdParam = searchParams.get('seller_id') || '';
+    const sellerNameParam = searchParams.get('seller_name') || '';
+
     const [products, setProducts] = useState<any[]>([]);
     const [categories, setCategories] = useState<string[]>([]);
     const [total, setTotal] = useState(0);
@@ -40,6 +46,7 @@ export default function AdminProductsPage() {
         setLoading(true);
         const token = localStorage.getItem('adminToken');
         const params = new URLSearchParams({ page: String(page), keyword, category: catFilter });
+        if (sellerIdParam) params.set('seller_id', sellerIdParam);
         const res = await fetch(`${API}/admin/products?${params}`, {
             headers: { Authorization: `Bearer ${token}` }
         });
@@ -51,7 +58,7 @@ export default function AdminProductsPage() {
             if (data.categories) setCategories(data.categories);
         }
         setLoading(false);
-    }, [page, keyword, catFilter]);
+    }, [page, keyword, catFilter, sellerIdParam]);
 
     useEffect(() => { fetchProducts(); }, [fetchProducts]);
 
@@ -164,19 +171,45 @@ export default function AdminProductsPage() {
             {/* Header */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
                 <div>
-                    <h1 style={{ fontSize: '24px', fontWeight: '800', margin: '0 0 4px' }}>Products (Storehouse)</h1>
-                    <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '14px', margin: 0 }}>{total} total products</p>
+                    {sellerIdParam ? (
+                        <>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
+                                <button
+                                    onClick={() => router.push('/admin/dashboard/products')}
+                                    style={{
+                                        background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)',
+                                        borderRadius: '8px', padding: '5px 10px', cursor: 'pointer',
+                                        color: 'rgba(255,255,255,0.6)', display: 'flex', alignItems: 'center', gap: '5px', fontSize: '12px'
+                                    }}
+                                >
+                                    <ArrowLeft size={13} /> All Products
+                                </button>
+                            </div>
+                            <h1 style={{ fontSize: '24px', fontWeight: '800', margin: '0 0 4px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <Store size={22} style={{ color: '#10b981' }} />
+                                {decodeURIComponent(sellerNameParam)}'s Products
+                            </h1>
+                            <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '14px', margin: 0 }}>{total} products added by this seller</p>
+                        </>
+                    ) : (
+                        <>
+                            <h1 style={{ fontSize: '24px', fontWeight: '800', margin: '0 0 4px' }}>Products (Storehouse)</h1>
+                            <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '14px', margin: 0 }}>{total} total products</p>
+                        </>
+                    )}
                 </div>
                 <div style={{ display: 'flex', gap: '8px' }}>
                     <button onClick={fetchProducts} style={{
                         background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)',
                         borderRadius: '10px', color: 'rgba(255,255,255,0.6)', padding: '9px 12px', cursor: 'pointer', display: 'flex'
                     }}><RefreshCw size={15} /></button>
-                    <button onClick={openAdd} style={{
-                        padding: '9px 18px', background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
-                        border: 'none', borderRadius: '10px', color: 'white', fontWeight: '700',
-                        cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px'
-                    }}><Plus size={16} /> Add Product</button>
+                    {!sellerIdParam && (
+                        <button onClick={openAdd} style={{
+                            padding: '9px 18px', background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                            border: 'none', borderRadius: '10px', color: 'white', fontWeight: '700',
+                            cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px'
+                        }}><Plus size={16} /> Add Product</button>
+                    )}
                 </div>
             </div>
 
@@ -489,5 +522,13 @@ function FormField({ label, value, onChange, placeholder, type = 'text' }: {
                 onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,0.1)')}
             />
         </div>
+    );
+}
+
+export default function AdminProductsPageWrapper() {
+    return (
+        <Suspense fallback={<div style={{ padding: '60px', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>Loading...</div>}>
+            <AdminProductsPage />
+        </Suspense>
     );
 }

@@ -364,6 +364,83 @@ const getAllOrders = asyncHandler(async (req, res) => {
     res.json({ success: true, orders, total, page, pages: Math.ceil(total / limit) });
 });
 
+// @desc    Create a new order (admin)
+// @route   POST /api/admin/orders
+// @access  Private/Admin
+const createOrder = asyncHandler(async (req, res) => {
+    const {
+        seller_id,
+        customer_name,
+        customer_email,
+        customer_phone,
+        customer_address,
+        payment_method,
+        products: orderProducts // [{ product_id, qty }]
+    } = req.body;
+
+    if (!seller_id || !customer_name || !customer_address || !orderProducts || !orderProducts.length) {
+        res.status(400);
+        throw new Error('seller_id, customer_name, customer_address, and products are required');
+    }
+
+    // Verify seller exists
+    const seller = await Seller.findById(seller_id);
+    if (!seller) {
+        res.status(404);
+        throw new Error('Seller not found');
+    }
+
+    // Fetch product details and calculate totals
+    let order_total = 0;
+    let cost_amount = 0;
+    const productDetails = [];
+
+    for (const item of orderProducts) {
+        if (!item.product_id || !item.qty || item.qty < 1) continue;
+        const product = await Product.findOne({
+            $or: [
+                { _id: mongoose.isValidObjectId(item.product_id) ? item.product_id : null },
+                { id: item.product_id }
+            ]
+        });
+        if (product) {
+            const qty = Number(item.qty) || 1;
+            order_total += (parseFloat(product.selling_price) || 0) * qty;
+            cost_amount += (parseFloat(product.price) || 0) * qty;
+            productDetails.push({ product_id: product._id, name: product.name, qty, price: product.selling_price });
+        }
+    }
+
+    if (productDetails.length === 0) {
+        res.status(400);
+        throw new Error('No valid products selected');
+    }
+
+    // Generate unique order code
+    const order_code = `ORD${Date.now()}${Math.floor(Math.random() * 1000)}`;
+
+    const newOrder = await Order.create({
+        order_code,
+        seller_id: seller._id,
+        customer_name,
+        customer_email: customer_email || '',
+        customer_phone: customer_phone || '',
+        customer_address,
+        payment_method: payment_method || 'Cash on Delivery',
+        order_total: order_total.toFixed(2),
+        cost_amount,
+        status: 'pending',
+        pick_up_status: 'Unpicked-Up',
+        payment_status: 'unpaid'
+    });
+
+    res.status(201).json({
+        success: true,
+        message: 'Order created successfully',
+        order: newOrder
+    });
+});
+
 // @desc    Update order status
 // @route   PUT /api/admin/orders/:id
 // @access  Private/Admin
@@ -397,7 +474,66 @@ const deleteOrder = asyncHandler(async (req, res) => {
 
 // ===================== PRODUCT MANAGEMENT ====================
 
-// @desc    Get all products (admin - storehouse)
+// @desc    Get products added to a specific seller's store (admin use)
+// @route   GET /api/admin/seller-store-products/:sellerId
+// @access  Private/Admin
+const getSellerStoreProducts = asyncHandler(async (req, res) => {
+    const sellerId = req.params.sellerId;
+
+    // Find the seller first to verify they exist
+    const seller = await Seller.findById(sellerId);
+    if (!seller) {
+        return res.json({ success: true, products: [], total: 0, sellerInfo: null });
+    }
+
+    // Build all possible selector variations for seller_id
+    const selectorVariants = [
+        { seller_id: sellerId },
+        { seller_id: String(sellerId) },
+        { seller_id: seller.id }, // Numeric ID
+        { seller_id: String(seller.id) }, // Numeric ID as string
+    ];
+    if (mongoose.isValidObjectId(sellerId)) {
+        selectorVariants.push({ seller_id: new mongoose.Types.ObjectId(sellerId) });
+    }
+
+    // Get all SellerProduct links for this seller
+    const links = await SellerProduct.find({ $or: selectorVariants });
+
+    console.log(`[Admin] Seller ${sellerId} has ${links.length} SellerProduct links`);
+
+    if (!links.length) {
+        return res.json({
+            success: true,
+            products: [],
+            total: 0,
+            sellerInfo: { name: seller.name, shop_name: seller.shop_name, email: seller.email }
+        });
+    }
+
+    // Collect all product_id values in every possible form
+    const productIds = links.map(l => l.product_id);
+    const validObjectIds = productIds.filter(id => mongoose.isValidObjectId(id)).map(id => new mongoose.Types.ObjectId(id));
+
+    const products = await Product.find({
+        isDeleted: { $ne: true },
+        $or: [
+            { _id: { $in: validObjectIds } },
+            { id: { $in: productIds } }
+        ]
+    }).sort({ createdAt: -1 });
+
+    console.log(`[Admin] Found ${products.length} products for seller ${sellerId}`);
+
+    res.json({
+        success: true,
+        products,
+        total: products.length,
+        sellerInfo: { name: seller.name, shop_name: seller.shop_name, email: seller.email }
+    });
+});
+
+// @desc    Get all products (admin - storehouse, optionally filtered by seller)
 // @route   GET /api/admin/products
 // @access  Private/Admin
 const getAllProducts = asyncHandler(async (req, res) => {
@@ -406,6 +542,51 @@ const getAllProducts = asyncHandler(async (req, res) => {
     const skip = (page - 1) * limit;
     const keyword = req.query.keyword || '';
     const category = req.query.category || '';
+    const sellerId = req.query.seller_id || '';
+
+    // If seller_id is provided, find what that seller has added
+    if (sellerId) {
+        const sellerLinks = await SellerProduct.find({
+            $or: [
+                { seller_id: sellerId },
+                { seller_id: String(sellerId) },
+                ...(mongoose.isValidObjectId(sellerId) ? [{ seller_id: new mongoose.Types.ObjectId(sellerId) }] : [])
+            ]
+        });
+
+        const productIds = sellerLinks.map(sp => sp.product_id);
+
+        let sellerFilter = {
+            isDeleted: { $ne: true },
+            $or: [
+                { _id: { $in: productIds.filter(id => mongoose.isValidObjectId(id)) } },
+                { id: { $in: productIds } }
+            ]
+        };
+        if (keyword) {
+            sellerFilter.$and = [{ $or: sellerFilter.$or }, {
+                $or: [
+                    { name: { $regex: keyword, $options: 'i' } },
+                    { category: { $regex: keyword, $options: 'i' } }
+                ]
+            }];
+            delete sellerFilter.$or;
+        }
+        if (category) sellerFilter.category = { $regex: category, $options: 'i' };
+
+        const total = await Product.countDocuments(sellerFilter);
+        const products = await Product.find(sellerFilter)
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit);
+
+        const categories = await Product.distinct('category', { isDeleted: { $ne: true } });
+
+        // Get seller info
+        const sellerInfo = await Seller.findById(sellerId).select('name shop_name email');
+
+        return res.json({ success: true, products, total, page, pages: Math.ceil(total / limit), categories, sellerInfo });
+    }
 
     let filter = { isDeleted: { $ne: true } };
     if (keyword) {
@@ -529,8 +710,10 @@ module.exports = {
     getAllWithdrawals,
     updateWithdrawalStatus,
     getAllOrders,
+    createOrder,
     updateOrderStatus,
     deleteOrder,
+    getSellerStoreProducts,
     getAllProducts,
     createProduct,
     updateProduct,

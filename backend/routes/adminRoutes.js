@@ -14,8 +14,10 @@ const {
     getAllWithdrawals,
     updateWithdrawalStatus,
     getAllOrders,
+    createOrder,
     updateOrderStatus,
     deleteOrder,
+    getSellerStoreProducts,
     getAllProducts,
     createProduct,
     updateProduct,
@@ -48,10 +50,12 @@ router.put('/withdrawals/:id', updateWithdrawalStatus);
 
 // Order Management
 router.get('/orders', getAllOrders);
+router.post('/orders', createOrder);
 router.put('/orders/:id', updateOrderStatus);
 router.delete('/orders/:id', deleteOrder);
 
 // Product Management (Storehouse)
+router.get('/seller-store-products/:sellerId', getSellerStoreProducts);
 router.get('/products', getAllProducts);
 router.post('/products', upload.fields([{ name: 'image', maxCount: 1 }]), createProduct);
 router.put('/products/:id', upload.fields([{ name: 'image', maxCount: 1 }]), updateProduct);

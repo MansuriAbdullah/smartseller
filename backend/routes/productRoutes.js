@@ -8,6 +8,7 @@ const {
     deleteProduct,
     getSellerProducts,
     addToMyStore,
+    removeFromStore,
 } = require('../controllers/productController');
 const { protect } = require('../middleware/authMiddleware');
 const upload = require('../middleware/uploadMiddleware');
@@ -21,6 +22,7 @@ router.route('/')
 
 router.route('/my-products').get(protect, getSellerProducts);
 router.route('/add-to-store').post(protect, addToMyStore);
+router.route('/from-store/:productId').delete(protect, removeFromStore);
 
 router.route('/:id')
     .get(getProductById)

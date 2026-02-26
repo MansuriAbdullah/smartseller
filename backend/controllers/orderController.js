@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const asyncHandler = require('express-async-handler');
 const Order = require('../models/Order');
 const OrderItem = require('../models/OrderItem');
@@ -86,7 +87,7 @@ const getOrderById = asyncHandler(async (req, res) => {
     if (order) {
         // Fetch associated order items with product details
         const orderItems = await OrderItem.find({ order_id: req.params.id })
-            .populate('product_id', 'name image price');
+            .populate('product_id', 'name image price selling_price');
 
         res.json({
             ...order.toObject(),
@@ -150,38 +151,8 @@ const payStorehouse = asyncHandler(async (req, res) => {
 
     const costAmount = order.cost_amount || 0;
 
-    // --- CHECK BALANCE LOGIC ---
-    // 1. Sales
-    const salesResult = await Order.aggregate([
-        { $match: { seller_id: seller._id, status: { $regex: 'processing|shipped|completed|delivered', $options: 'i' } } },
-        { $group: { _id: null, total: { $sum: { $toDouble: '$order_total' } } } }
-    ]);
-    const totalSales = salesResult.length > 0 ? salesResult[0].total : 0;
-
-    // 2. Recharges
-    const rechargeResult = await Recharge.aggregate([
-        { $match: { seller_id: seller._id, status: 1 } },
-        { $group: { _id: null, total: { $sum: { $toDouble: '$amount' } } } }
-    ]);
-    const totalRecharge = rechargeResult.length > 0 ? rechargeResult[0].total : 0;
-
-    // 3. Withdrawals
-    const withdrawResult = await Withdraw.aggregate([
-        { $match: { seller_id: seller._id, status: { $in: [0, 1] } } },
-        { $group: { _id: null, total: { $sum: '$amount' } } }
-    ]);
-    const totalWithdraw = withdrawResult.length > 0 ? withdrawResult[0].total : 0;
-
-    // 4. Storehouse Payments (NEW)
-    const storehouseResult = await StorehousePayment.aggregate([
-        { $match: { seller_id: seller._id, status: 'Completed' } },
-        { $group: { _id: null, total: { $sum: '$amount' } } }
-    ]);
-    const totalStorehousePaid = storehouseResult.length > 0 ? storehouseResult[0].total : 0;
-
-    const availableBalance = (totalSales + totalRecharge) - (totalWithdraw + totalStorehousePaid);
-
-    if (availableBalance < costAmount) {
+    // --- CHECK BALANCE ---
+    if ((seller.wallet_balance || 0) < costAmount) {
         res.status(400);
         throw new Error('Insufficient wallet balance to pay storehouse price');
     }
@@ -195,8 +166,13 @@ const payStorehouse = asyncHandler(async (req, res) => {
         seller_id: seller._id
     });
 
-    // 2. Update Order
+    // 2. Deduct from wallet
+    seller.wallet_balance = (seller.wallet_balance || 0) - costAmount;
+    await seller.save();
+
+    // 3. Update Order
     order.pick_up_status = 'Picked Up';
+    order.payment_status = 'Paid'; // Seller has paid the storehouse price
     const updatedOrder = await order.save();
 
     res.json(updatedOrder);
@@ -346,6 +322,22 @@ const updateOrder = asyncHandler(async (req, res) => {
     const order = await Order.findById(req.params.id);
 
     if (order) {
+        // Credit seller wallet if status hits 'delivered' (and wasn't already)
+        if (req.body.status === 'delivered' && order.status !== 'delivered') {
+            const seller = await Seller.findOne({
+                $or: [
+                    { _id: mongoose.isValidObjectId(order.seller_id) ? order.seller_id : null },
+                    { id: order.seller_id },
+                    { id: Number(order.seller_id) }
+                ].filter(q => q._id !== null || q.id !== undefined)
+            });
+
+            if (seller) {
+                seller.wallet_balance = (seller.wallet_balance || 0) + (parseFloat(order.order_total) || 0);
+                await seller.save();
+            }
+        }
+
         order.status = req.body.status || order.status;
         order.pick_up_status = req.body.pick_up_status || order.pick_up_status;
         order.payment_status = req.body.payment_status || order.payment_status;

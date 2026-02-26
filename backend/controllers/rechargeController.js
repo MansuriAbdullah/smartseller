@@ -51,7 +51,71 @@ const updateRechargeStatus = asyncHandler(async (req, res) => {
     }
 });
 
+// @desc    Create a recharge request
+// @route   POST /api/recharges
+// @access  Private
+const createRecharge = asyncHandler(async (req, res) => {
+    const { amount, mode } = req.body;
+
+    if (!amount) {
+        res.status(400);
+        throw new Error('Please provide an amount');
+    }
+
+    const lastRec = await Recharge.findOne().sort({ id: -1 });
+    const newId = lastRec && lastRec.id ? lastRec.id + 1 : 1;
+
+    const recharge = await Recharge.create({
+        id: newId,
+        seller_id: req.user._id,
+        amount: String(amount),
+        mode: mode || 'online',
+        status: 0, // Pending
+        created_at: new Date().toISOString()
+    });
+
+    res.status(201).json({
+        success: true,
+        recharge
+    });
+});
+
+// @desc    Complete recharge (Simulate payment success)
+// @route   PUT /api/recharges/:id/complete
+// @access  Private
+const completeRecharge = asyncHandler(async (req, res) => {
+    const recharge = await Recharge.findById(req.params.id);
+
+    if (!recharge) {
+        res.status(404);
+        throw new Error('Recharge request not found');
+    }
+
+    if (recharge.status === 1) {
+        res.status(400);
+        throw new Error('Recharge already completed');
+    }
+
+    recharge.status = 1; // Success
+    await recharge.save();
+
+    // Update seller wallet
+    const seller = await Seller.findById(recharge.seller_id);
+    if (seller) {
+        seller.wallet_balance = (seller.wallet_balance || 0) + Number(recharge.amount);
+        await seller.save();
+    }
+
+    res.json({
+        success: true,
+        message: 'Payment completed and wallet updated',
+        wallet_balance: seller ? seller.wallet_balance : 0
+    });
+});
+
 module.exports = {
     getRecharges,
-    updateRechargeStatus
+    updateRechargeStatus,
+    createRecharge,
+    completeRecharge
 };

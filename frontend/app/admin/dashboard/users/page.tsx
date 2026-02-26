@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { Search, Trash2, Shield, ShieldOff, CheckCircle, XCircle, RefreshCw } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Search, Trash2, Shield, ShieldOff, CheckCircle, XCircle, RefreshCw, Package } from 'lucide-react';
 
 function Badge({ children, color }: any) {
     const colors: any = {
@@ -20,6 +21,7 @@ function Badge({ children, color }: any) {
 }
 
 export default function AdminUsersPage() {
+    const router = useRouter();
     const [users, setUsers] = useState<any[]>([]);
     const [total, setTotal] = useState(0);
     const [page, setPage] = useState(1);
@@ -110,7 +112,7 @@ export default function AdminUsersPage() {
                     <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '700px' }}>
                         <thead>
                             <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-                                {['ID', 'Name', 'Email', 'Shop', 'Status', 'Verified', 'Actions'].map(h => (
+                                {['ID', 'Name', 'Email', 'Shop', 'Status', 'Verified', 'Products', 'Actions'].map(h => (
                                     <th key={h} style={{
                                         padding: '14px 16px', textAlign: 'left',
                                         fontSize: '11px', fontWeight: '700',
@@ -121,9 +123,9 @@ export default function AdminUsersPage() {
                         </thead>
                         <tbody>
                             {loading ? (
-                                <tr><td colSpan={7} style={{ padding: '40px', textAlign: 'center', color: 'rgba(255,255,255,0.3)' }}>Loading...</td></tr>
+                                <tr><td colSpan={8} style={{ padding: '40px', textAlign: 'center', color: 'rgba(255,255,255,0.3)' }}>Loading...</td></tr>
                             ) : users.length === 0 ? (
-                                <tr><td colSpan={7} style={{ padding: '40px', textAlign: 'center', color: 'rgba(255,255,255,0.3)' }}>No users found</td></tr>
+                                <tr><td colSpan={8} style={{ padding: '40px', textAlign: 'center', color: 'rgba(255,255,255,0.3)' }}>No users found</td></tr>
                             ) : users.map(u => (
                                 <tr key={u._id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', transition: 'background 0.2s' }}
                                     onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.03)')}
@@ -138,6 +140,20 @@ export default function AdminUsersPage() {
                                     </td>
                                     <td style={{ padding: '12px 16px' }}>
                                         <Badge color={u.verified === 1 ? 'green' : 'yellow'}>{u.verified === 1 ? 'Verified' : 'Pending'}</Badge>
+                                    </td>
+                                    <td style={{ padding: '12px 16px' }}>
+                                        <button
+                                            onClick={() => router.push(`/admin/dashboard/products?seller_id=${u._id}&seller_name=${encodeURIComponent(u.name || u.shop_name || 'Seller')}`)}
+                                            title="View Products"
+                                            style={{
+                                                background: 'rgba(16,185,129,0.15)', border: '1px solid rgba(16,185,129,0.3)',
+                                                borderRadius: '8px', padding: '5px 10px', cursor: 'pointer',
+                                                color: '#10b981', display: 'flex', alignItems: 'center', gap: '4px',
+                                                fontSize: '11px', fontWeight: '700'
+                                            }}
+                                        >
+                                            <Package size={12} /> View
+                                        </button>
                                     </td>
                                     <td style={{ padding: '12px 16px' }}>
                                         <div style={{ display: 'flex', gap: '6px' }}>

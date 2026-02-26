@@ -72,6 +72,14 @@ const sellerSchema = mongoose.Schema({
     otpExpires: {
         type: Date,
         required: false
+    },
+    wallet_balance: {
+        type: Number,
+        default: 0,
+    },
+    guarantee_balance: {
+        type: Number,
+        default: 0,
     }
 }, {
     timestamps: true,

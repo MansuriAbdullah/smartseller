@@ -159,7 +159,11 @@ export default function OrdersPage() {
                                             </td>
                                             <td className="px-6 py-4 text-right">
                                                 <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                    <button className="p-2 hover:bg-gray-100 rounded-lg text-gray-600 transition-all">
+                                                    <button
+                                                        onClick={() => router.push(`/orders/${order._id}`)}
+                                                        className="p-2 hover:bg-gray-100 rounded-lg text-gray-600 transition-all"
+                                                        title="View Details"
+                                                    >
                                                         <Eye className="w-4 h-4" />
                                                     </button>
                                                     <button className="p-2 hover:bg-gray-100 rounded-lg text-gray-600 transition-all">

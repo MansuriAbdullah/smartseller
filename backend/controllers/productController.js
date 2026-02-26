@@ -199,10 +199,9 @@ const getSellerProducts = asyncHandler(async (req, res) => {
         if (product) {
             return {
                 ...product.toObject(),
-                // Keep the link info if needed, or ensure IDs are consistent
                 _id: product._id,
                 id: product.id,
-                link_id: link.id // unique id from SellerProduct might be useful
+                link_id: link._id  // MongoDB _id of the SellerProduct document
             };
         } else {
             // Placeholder for Missing Product
@@ -253,7 +252,7 @@ const getSellerProducts = asyncHandler(async (req, res) => {
 // @route   POST /api/products/add-to-store
 // @access  Private/Seller
 const addToMyStore = asyncHandler(async (req, res) => {
-    const { product_id } = req.body; // Expecting ID (could be custom "75" or ObjectId)
+    const { product_id } = req.body;
 
     if (!product_id) {
         res.status(400);
@@ -273,47 +272,84 @@ const addToMyStore = asyncHandler(async (req, res) => {
         throw new Error('Product not found in Storehouse');
     }
 
-    // Determine seller ID to use (prefer custom ID if available, else ObjectId)
-    const sellerId = req.user.id || req.user._id;
+    const sellerId = req.user._id;
 
-    // Check if already added
-    const existingLink = await SellerProduct.findOne({
-        $or: [
-            { seller_id: req.user.id, product_id: product.id }, // Check custom ID match
-            { seller_id: req.user._id, product_id: product._id }, // Check ObjectId match
-            // Mixed check
-            { seller_id: req.user.id, product_id: product._id },
-            { seller_id: req.user._id, product_id: product.id }
-        ]
-    });
+    // Check how many products the seller has already added
+    const currentCount = await SellerProduct.countDocuments({ seller_id: req.user._id });
 
-    if (existingLink) {
+    // Check the seller's plan product limit
+    const Package = require('../models/Package');
+    const latestPackage = await Package.findOne({ seller_id: sellerId }).sort({ created_at: -1 });
+    const productLimit = latestPackage ? latestPackage.product_limit : 10; // Default free plan = 10
+
+    if (currentCount >= productLimit) {
         res.status(400);
-        throw new Error('Product already added to your store');
+        throw new Error(`Product limit reached. Your plan allows ${productLimit} products. Please upgrade your package.`);
     }
 
-    // Generate a new unique ID for SellerProduct if needed, or let DB handle _id.
-    // Schema has 'id' required. We need to generate one?
-    // Let's find max ID and increment, or use timestamp.
-    const lastRec = await SellerProduct.findOne().sort({ id: -1 });
-    const newId = lastRec && lastRec.id ? lastRec.id + 1 : 1;
+    // We prefer using the same ID type as found in Product.
+    const linkProductId = product._id;
 
-    // Create Link
-    // We prefer using the same ID type as found in Product. 
-    // If product has custom 'id', use that. Else use '_id'.
-    const linkProductId = product.id || product._id;
+    try {
+        const newLink = await SellerProduct.create({
+            seller_id: sellerId,
+            product_id: linkProductId
+        });
 
-    const newLink = await SellerProduct.create({
-        id: newId,
-        seller_id: sellerId,
-        product_id: linkProductId
-    });
+        return res.status(201).json({
+            success: true,
+            message: 'Product added to your store',
+            data: newLink
+        });
+    } catch (err) {
+        // Handle MongoDB duplicate key error (compound index)
+        if (err.code === 11000) {
+            res.status(400);
+            throw new Error('Product already added to your store');
+        }
+        throw err;
+    }
+});
 
-    res.status(201).json({
-        success: true,
-        message: 'Product added to your store',
-        data: newLink
-    });
+// @desc    Remove a product from seller's store (delete the SellerProduct link)
+// @route   DELETE /api/products/from-store/:linkId
+// @access  Private/Seller
+const removeFromStore = asyncHandler(async (req, res) => {
+    const linkId = req.params.productId;
+    const sellerId = req.user._id;
+
+    let deleted = false;
+
+    // Strategy 1: try deleting by the SellerProduct's own _id (most reliable)
+    if (mongoose.isValidObjectId(linkId)) {
+        const result = await SellerProduct.deleteOne({
+            _id: new mongoose.Types.ObjectId(linkId)
+        });
+        if (result.deletedCount > 0) deleted = true;
+    }
+
+    // Strategy 2: try matching as product_id (ObjectId)
+    if (!deleted && mongoose.isValidObjectId(linkId)) {
+        const result = await SellerProduct.deleteOne({
+            product_id: new mongoose.Types.ObjectId(linkId)
+        });
+        if (result.deletedCount > 0) deleted = true;
+    }
+
+    // Strategy 3: try matching as product_id (string/number)
+    if (!deleted) {
+        const result = await SellerProduct.deleteOne({
+            product_id: linkId
+        });
+        if (result.deletedCount > 0) deleted = true;
+    }
+
+    if (!deleted) {
+        res.status(404);
+        throw new Error('Product link not found in your store');
+    }
+
+    res.json({ success: true, message: 'Product removed from your store' });
 });
 
 module.exports = {
@@ -324,4 +360,6 @@ module.exports = {
     deleteProduct,
     getSellerProducts,
     addToMyStore,
+    removeFromStore,
 };
+

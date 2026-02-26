@@ -1,10 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Navigation from './Navigation';
 import { LayoutDashboard, Menu, Bell, Search, LogOut, ChevronDown, Wallet, PlusCircle } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-
+import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { api } from '@/lib/api';
 
@@ -124,14 +123,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
                     </div>
 
                     <div className="hidden md:flex items-center flex-1 max-w-lg mx-8">
-                        <div className="relative w-full">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                            <input
-                                type="text"
-                                placeholder="Universal search..."
-                                className="w-full pl-11 pr-4 py-2.5 bg-gray-100/50 border border-transparent rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-500/10 focus:bg-white transition-all text-sm font-medium"
-                            />
-                        </div>
+                        <SearchBar router={router} />
                     </div>
 
                     <div className="flex items-center gap-3 lg:gap-4">
@@ -145,7 +137,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
                             </div>
                             <div className="flex flex-col items-start">
                                 <span className="text-[9px] font-bold text-success-600 uppercase tracking-tighter leading-none">Wallet</span>
-                                <span className="text-sm font-black text-gray-900 leading-none mt-1">${(stats?.guaranteeMoney || 0).toLocaleString()}</span>
+                                <span className="text-sm font-black text-gray-900 leading-none mt-1">${(stats?.mainWallet || 0).toLocaleString()}</span>
                             </div>
                             <PlusCircle className="w-4 h-4 text-success-500 ml-1 opacity-50 group-hover:opacity-100 transition-opacity hidden sm:block" />
                         </button>
@@ -173,5 +165,40 @@ function Smartphone({ size = 24, className = "" }) {
             <rect width="14" height="20" x="5" y="2" rx="2" ry="2" />
             <path d="M12 18h.01" />
         </svg>
+    );
+}
+
+function SearchBar({ router }: { router: ReturnType<typeof useRouter> }) {
+    const [query, setQuery] = useState('');
+    const pathname = usePathname();
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter' && query.trim()) {
+            const q = encodeURIComponent(query.trim());
+            // Route based on current page context
+            if (pathname?.includes('/products')) {
+                router.push(`/products?keyword=${q}`);
+            } else if (pathname?.includes('/orders')) {
+                router.push(`/orders?keyword=${q}`);
+            } else {
+                // Default: search storehouse
+                router.push(`/storehouse?search=${q}`);
+            }
+            setQuery('');
+        }
+    };
+
+    return (
+        <div className="relative w-full">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input
+                type="text"
+                placeholder="Search products, orders..."
+                value={query}
+                onChange={e => setQuery(e.target.value)}
+                onKeyDown={handleKeyDown}
+                className="w-full pl-11 pr-4 py-2.5 bg-gray-100/50 border border-transparent rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:bg-white transition-all text-sm font-medium"
+            />
+        </div>
     );
 }
